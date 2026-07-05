@@ -1,0 +1,183 @@
+.shape-game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.shape-game-container {
+    width: 90%;
+    max-width: 800px;
+    background: #FFF;
+    border-radius: 30px;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+    border: 4px solid #E6E6FA;
+    
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    cursor: pointer;
+    color: #000000;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: rotate(90deg);
+}
+
+.game-status {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.instruction {
+    font-size: 2rem;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+.highlight-text {
+    color: #BAE1FF;
+    font-weight: bold;
+}
+
+.draggable-shape-area {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.bins-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.bin-drop-zone {
+    width: 120px;
+    height: 120px;
+    border: 3px dashed #CCC;
+    border-radius: 20px;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.bin-drop-zone:hover {
+    border-color: #888;
+    background-color: #FAFAFA;
+}
+
+.bin-outline {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #CCC;
+    opacity: 0.6;
+}
+
+
+.shape-item {
+    width: 100px;
+    height: 100px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.shape-circle,
+.shape-circle.bin-outline {
+    border-radius: 50%;
+}
+
+.shape-square,
+.shape-square.bin-outline {
+    border-radius: 15px;
+}
+
+.shape-triangle {
+    width: 0;
+    height: 0;
+    background: transparent !important;
+    
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid #FFFFBA;
+    box-shadow: none;
+    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+}
+
+.shape-triangle.bin-outline {
+    width: 0;
+    height: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 60px solid #CCC;
+    background: none !important;
+    border-top: none;
+}
+
+.shape-star {
+    
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.shape-star.bin-outline {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background-color: #CCC;
+    border: none;
+}
+
+.feedback-area {
+    height: 30px;
+    font-size: 1.5rem;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.5s;
+}

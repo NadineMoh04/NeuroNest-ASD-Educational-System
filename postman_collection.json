@@ -1,0 +1,1952 @@
+{
+    "info": {
+        "_postman_id": "learningfun-api-v2",
+        "name": "LearningFun API – Complete Test Suite",
+        "description": "Complete Postman collection for LearningFun Autism Support Platform.\nBase URL: http://localhost:5000\n\nRun order:\n1. Parent Register  → saves parent_token + child_id\n2. Parent Login     → refreshes parent_token\n3. Admin Login      → saves admin_token\n4. Run remaining requests in order",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:5000",
+            "type": "string"
+        },
+        {
+            "key": "parent_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "child_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "admin_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "manage_parent_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "manage_admin_id",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "1 - Health Check",
+            "item": [
+                {
+                    "name": "GET  /api  (server alive)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:5000/api",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Welcome message', () => pm.expect(pm.response.json().message).to.include('LearningFun'));"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "2 - Parent APIs",
+            "item": [
+                {
+                    "name": "POST  /api/parent/register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Sara Ahmed\",\n  \"email\": \"sara.ahmed@example.com\",\n  \"password\": \"pass1234\",\n  \"kidname\": \"Ali Ahmed\",\n  \"childInfo\": {\n    \"age\": 5,\n    \"sex\": \"male\",\n    \"ethnicity\": \"asian\",\n    \"qchatScore\": 6,\n    \"asdPrediction\": 72,\n    \"speechDelay\": true,\n    \"learningDisorder\": false,\n    \"gddId\": false,\n    \"geneticDisorders\": false,\n    \"geneticDisordersNotes\": \"\",\n    \"jaundice\": true,\n    \"anxietyDisorder\": false,\n    \"depression\": false,\n    \"socialBehaviouralIssues\": true,\n    \"familyMemberAsd\": true,\n    \"whoCompletedTest\": \"Parent\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/register",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "register"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "pm.test('Has token', () => pm.expect(pm.response.json()).to.have.property('token'));",
+                                    "const j = pm.response.json();",
+                                    "if (j.token) pm.collectionVariables.set('parent_token', j.token);",
+                                    "if (j.parent && j.parent.children && j.parent.children.length > 0)",
+                                    "    pm.collectionVariables.set('child_id', j.parent.children[0]._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/register  [ERR - missing fields]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Incomplete\",\n  \"email\": \"incomplete@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/register",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "register"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 400 - missing fields', () => pm.response.to.have.status(400));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/register  [ERR - duplicate email]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Sara Ahmed\",\n  \"email\": \"sara.ahmed@example.com\",\n  \"password\": \"pass1234\",\n  \"kidname\": \"Child Two\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/register",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "register"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 400 - duplicate', () => pm.response.to.have.status(400));",
+                                    "pm.test('Error mentions exists', () => pm.expect(pm.response.json().message).to.include('exists'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"sara.ahmed@example.com\",\n  \"password\": \"pass1234\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/login",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "login"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has token', () => pm.expect(pm.response.json()).to.have.property('token'));",
+                                    "const j = pm.response.json();",
+                                    "if (j.token) pm.collectionVariables.set('parent_token', j.token);",
+                                    "if (j.parent && j.parent.children && j.parent.children.length > 0)",
+                                    "    pm.collectionVariables.set('child_id', j.parent.children[0]._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/login  [ERR - wrong password]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"sara.ahmed@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/login",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "login"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 400 - wrong password', () => pm.response.to.have.status(400));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/parent/profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/profile",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "profile"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has parent', () => pm.expect(pm.response.json()).to.have.property('parent'));",
+                                    "pm.test('No password exposed', () => pm.expect(pm.response.json().parent).to.not.have.property('password'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/parent/profile  [ERR - no token]",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/profile",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "profile"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/parent/children",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Children array', () => pm.expect(pm.response.json().children).to.be.an('array'));",
+                                    "const j = pm.response.json();",
+                                    "if (j.children && j.children.length > 0) pm.collectionVariables.set('child_id', j.children[0]._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/parent/children/:childId",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has child', () => pm.expect(pm.response.json()).to.have.property('child'));",
+                                    "pm.test('Child has progress', () => pm.expect(pm.response.json().child).to.have.property('progress'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/parent/children/:childId  [ERR - invalid id]",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/000000000000000000000000",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "000000000000000000000000"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT   /api/parent/children/:childId  (update child info)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ali Ahmed Updated\",\n  \"age\": 6,\n  \"sex\": \"male\",\n  \"ethnicity\": \"asian\",\n  \"speechDelay\": true,\n  \"learningDisorder\": true,\n  \"gddId\": false,\n  \"geneticDisorders\": false,\n  \"jaundice\": true,\n  \"anxietyDisorder\": false,\n  \"depression\": false,\n  \"socialBehaviouralIssues\": true,\n  \"familyMemberAsd\": true,\n  \"asdPrediction\": 78\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Age updated to 6', () => pm.expect(pm.response.json().child.age).to.eql(6));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT   /api/parent/children/:childId/progress",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"activityType\": \"game\",\n  \"pointsEarned\": 30,\n  \"completed\": true,\n  \"skillsImproved\": {\n    \"communication\": 8,\n    \"attention\": 5,\n    \"socialInteraction\": 10\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}/progress",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}",
+                                "progress"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has totalPoints', () => pm.expect(pm.response.json().child.progress).to.have.property('totalPoints'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT   /api/parent/children/:childId/progress  (points only)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"pointsEarned\": 15,\n  \"completed\": false\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}/progress",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}",
+                                "progress"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/children/:childId/mood  [happy]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"mood\": \"happy\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}/mood",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}",
+                                "mood"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Mood is happy', () => pm.expect(pm.response.json().mood.mood).to.eql('happy'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/children/:childId/mood  [neutral]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"mood\": \"neutral\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}/mood",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}",
+                                "mood"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/children/:childId/mood  [sad]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"mood\": \"sad\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}/mood",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}",
+                                "mood"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/children/:childId/mood  [angry]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"mood\": \"angry\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}/mood",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}",
+                                "mood"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/parent/children/:childId/mood  [ERR - invalid mood]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"mood\": \"excited\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/parent/children/{{child_id}}/mood",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "parent",
+                                "children",
+                                "{{child_id}}",
+                                "mood"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 400 - invalid mood', () => pm.response.to.have.status(400));",
+                                    "pm.test('Message says Invalid mood', () => pm.expect(pm.response.json().message).to.include('Invalid mood'));"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "3 - Admin APIs",
+            "item": [
+                {
+                    "name": "POST  /api/admin/login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@learningfun.com\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/login",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "login"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has token', () => pm.expect(pm.response.json()).to.have.property('token'));",
+                                    "const j = pm.response.json();",
+                                    "if (j.token) pm.collectionVariables.set('admin_token', j.token);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/admin/login  [ERR - wrong password]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@learningfun.com\",\n  \"password\": \"wrongpass\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/login",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "login"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 400 or 401', () => pm.expect(pm.response.code).to.be.oneOf([400,401]));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/admin/dashboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/dashboard",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "dashboard"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/admin/dashboard  [ERR - no token]",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/dashboard",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "dashboard"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/admin/dashboard  [ERR - parent token]",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/dashboard",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "dashboard"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 401 or 403 - wrong role', () => pm.expect(pm.response.code).to.be.oneOf([401,403]));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/admin/parents",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/parents",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "parents"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "const j = pm.response.json();",
+                                    "if (j.parents && j.parents.length > 0) pm.collectionVariables.set('manage_parent_id', j.parents[0]._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/admin/children",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/children",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "children"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/admin/users",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/users",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "users"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/admin/admins",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/admins",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "admins"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "const j = pm.response.json();",
+                                    "if (j.admins && j.admins.length > 0) pm.collectionVariables.set('manage_admin_id', j.admins[0]._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/admin/admins  (create admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Assistant Admin\",\n  \"email\": \"assistant.admin@learningfun.com\",\n  \"password\": \"admin123\",\n  \"role\": \"admin\",\n  \"permissions\": [\"manage_users\", \"manage_parents\", \"view_reports\"]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/admins",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "admins"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                                    "const j = pm.response.json();",
+                                    "if (j.admin && j.admin._id) pm.collectionVariables.set('manage_admin_id', j.admin._id);"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT   /api/admin/admins/:id/status  (deactivate)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"isActive\": false\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/admins/{{manage_admin_id}}/status",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "admins",
+                                "{{manage_admin_id}}",
+                                "status"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT   /api/admin/admins/:id/status  (reactivate)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"isActive\": true\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/admins/{{manage_admin_id}}/status",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "admins",
+                                "{{manage_admin_id}}",
+                                "status"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT   /api/admin/parents/:id  (update parent)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Sara Ahmed Admin Updated\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/parents/{{manage_parent_id}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "parents",
+                                "{{manage_parent_id}}"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT   /api/admin/parents/:parentId/children/:childId  (update child)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ali Ahmed Admin Edit\",\n  \"learningLevel\": \"intermediate\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/parents/{{manage_parent_id}}/children/{{child_id}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "parents",
+                                "{{manage_parent_id}}",
+                                "children",
+                                "{{child_id}}"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/admin/admins/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/admins/{{manage_admin_id}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "admins",
+                                "{{manage_admin_id}}"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/admin/parents/:parentId/children/:childId",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/parents/{{manage_parent_id}}/children/{{child_id}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "parents",
+                                "{{manage_parent_id}}",
+                                "children",
+                                "{{child_id}}"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DELETE /api/admin/parents/:id",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/admin/parents/{{manage_parent_id}}",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "admin",
+                                "parents",
+                                "{{manage_parent_id}}"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "4 - ML Prediction APIs",
+            "item": [
+                {
+                    "name": "POST  /api/prediction/predict  [High Risk - all 1s]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"features\": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 3]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/prediction/predict",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "prediction",
+                                "predict"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "const j = pm.response.json();",
+                                    "pm.test('Has prediction',  () => pm.expect(j).to.have.property('prediction'));",
+                                    "pm.test('Has probability', () => pm.expect(j).to.have.property('probability'));",
+                                    "pm.test('Has confidence',  () => pm.expect(j).to.have.property('confidence'));",
+                                    "pm.test('Has risk_level',  () => pm.expect(j).to.have.property('risk_level'));",
+                                    "pm.test('Prediction is 0 or 1', () => pm.expect(j.prediction).to.be.oneOf([0,1]));",
+                                    "pm.test('risk_level valid', () => pm.expect(j.risk_level).to.be.oneOf(['Low','Medium','High']));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/prediction/predict  [Low Risk - all 0s]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"features\": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 1]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/prediction/predict",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "prediction",
+                                "predict"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has risk_level', () => pm.expect(pm.response.json()).to.have.property('risk_level'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/prediction/predict  [Medium Risk - mixed]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"features\": [0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 4, 1, 0, 1, 5]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/prediction/predict",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "prediction",
+                                "predict"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Full shape', () => pm.expect(pm.response.json()).to.have.all.keys('prediction','probability','confidence','risk_level'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/prediction/predict  [ERR - too few features]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"features\": [1, 0, 1]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/prediction/predict",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "prediction",
+                                "predict"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Error status returned', () => pm.expect(pm.response.code).to.be.oneOf([400,500]));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/prediction/predict  [ERR - empty body]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/prediction/predict",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "prediction",
+                                "predict"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Error status returned', () => pm.expect(pm.response.code).to.be.oneOf([400,500]));"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "5 - Test / Q-CHAT-10 APIs",
+            "item": [
+                {
+                    "name": "POST  /api/test/submit  (parent → child, score 7)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"childId\": \"{{child_id}}\",\n  \"score\": 7,\n  \"answers\": [\n    \"always\",\n    \"usually\",\n    \"sometimes\",\n    \"always\",\n    \"rarely\",\n    \"never\",\n    \"always\",\n    \"usually\",\n    \"sometimes\",\n    \"always\"\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/test/submit",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "test",
+                                "submit"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Message says submitted', () => pm.expect(pm.response.json().message).to.include('submitted'));",
+                                    "pm.test('Score in response', () => pm.expect(pm.response.json()).to.have.property('score'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/test/submit  (score 0 - no ASD indicators)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"childId\": \"{{child_id}}\",\n  \"score\": 0,\n  \"answers\": [\"never\",\"never\",\"never\",\"never\",\"never\",\"never\",\"never\",\"never\",\"never\",\"never\"]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/test/submit",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "test",
+                                "submit"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "POST  /api/test/submit  [ERR - missing childId]",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"score\": 5,\n  \"answers\": [\"always\",\"sometimes\",\"rarely\",\"never\",\"usually\",\"always\",\"usually\",\"sometimes\",\"rarely\",\"never\"]\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5000/api/test/submit",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "test",
+                                "submit"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 400 - childId required', () => pm.response.to.have.status(400));",
+                                    "pm.test('Message mentions Child ID', () => pm.expect(pm.response.json().message).to.include('Child ID'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/test/status  (parent)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{parent_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "http://localhost:5000/api/test/status",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "test",
+                                "status"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Has children array', () => pm.expect(pm.response.json()).to.have.property('children'));"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GET   /api/test/status  [ERR - no token]",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:5000/api/test/status",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "5000",
+                            "path": [
+                                "api",
+                                "test",
+                                "status"
+                            ]
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

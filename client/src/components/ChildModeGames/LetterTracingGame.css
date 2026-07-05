@@ -1,0 +1,242 @@
+.letter-tracing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.letter-tracing-container {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 24px;
+  padding: 30px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  color: #000000;
+  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: rotate(90deg);
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.game-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 2rem;
+}
+
+.game-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.tracing-area {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  margin: 20px 0;
+  position: relative;
+}
+
+.letter-display {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.letter-display h3 {
+  margin: 0 0 10px 0;
+  color: #667eea;
+  font-size: 1.5rem;
+}
+
+.current-letter {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #f5576c;
+  animation: pulse 2s ease-in-out infinite;
+  margin: 10px 0;
+}
+
+.tracing-canvas {
+  border: 4px dashed #667eea;
+  border-radius: 16px;
+  background: white;
+  cursor: crosshair;
+  display: block;
+  margin: 0 auto;
+  touch-action: none;
+}
+
+.letter-guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  margin-top: 50px;
+}
+
+.guide-overlay text {
+  opacity: 0.3;
+}
+
+.tracing-controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn:active {
+  transform: translateY(-1px);
+}
+
+.control-btn.clear {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+}
+
+.control-btn.retry {
+  background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+  color: white;
+}
+
+.control-btn.complete {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+
+@media (max-width: 768px) {
+  .letter-tracing-container {
+    padding: 20px;
+  }
+
+  .game-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .game-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .current-letter {
+    font-size: 4rem;
+  }
+
+  .tracing-canvas {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+  }
+
+  .tracing-controls {
+    flex-direction: column;
+  }
+
+  .control-btn {
+    width: 100%;
+  }
+}
+
+
+.result-message {
+  text-align: center;
+  padding: 20px;
+  border-radius: 16px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 20px 0;
+  animation: slideIn 0.3s ease;
+}
+
+.result-message.correct {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.result-message.incorrect {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

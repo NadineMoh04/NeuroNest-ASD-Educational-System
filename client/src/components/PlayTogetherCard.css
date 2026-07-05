@@ -1,0 +1,402 @@
+.play-together-card {
+    border-top: 6px solid;
+    border-image: linear-gradient(90deg, #ffecd2, #fcb69f, #ff9a76) 1;
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    min-height: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.play-together-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+
+.play-together-card.full-width {
+    grid-column: span 2;
+    min-height: 600px;
+}
+
+.play-together-card.full-width .card-header {
+    padding: 35px;
+}
+
+.play-together-card.full-width .header-icon {
+    font-size: 4.5rem;
+}
+
+.play-together-card.full-width .header-content h2 {
+    font-size: 2rem;
+}
+
+.play-together-card.full-width .card-subtitle {
+    font-size: 1.2rem;
+}
+
+.play-together-card.full-width .quick-stats,
+.play-together-card.full-width .rewards-preview {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.play-together-card.full-width .play-together-btn {
+    padding: 24px;
+    font-size: 1.4rem;
+}
+
+.play-together-card.full-width .stat-number {
+    font-size: 1.8rem;
+}
+
+.play-together-card.full-width .reward-value {
+    font-size: 1.6rem;
+}
+
+
+.card-header {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-icon {
+    font-size: 3.5rem;
+    animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.header-content h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+.card-subtitle {
+    margin: 5px 0 0 0;
+    color: #666;
+    font-size: 1rem;
+}
+
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 20px 25px;
+    background: #f8f9fa;
+}
+
+.quick-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-emoji {
+    font-size: 2rem;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+
+.progress-section {
+    padding: 20px 25px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.progress-level {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.progress-percent {
+    font-weight: bold;
+    color: #666;
+    font-size: 1rem;
+}
+
+.progress-bar {
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.rewards-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 0 25px 20px 25px;
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.reward-emoji {
+    font-size: 2rem;
+}
+
+.reward-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.reward-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.reward-label {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+
+.play-checklist {
+    padding: 0 25px 20px 25px;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #f5f7fa;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checklist-item:hover {
+    background: #e8eaed;
+    transform: translateX(5px);
+}
+
+.check-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #667eea;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 50%;
+}
+
+.check-text {
+    color: #555;
+    font-size: 0.95rem;
+}
+
+
+.play-together-btn {
+    width: calc(100% - 50px);
+    margin: 0 25px 20px 25px;
+    
+    background: linear-gradient(135deg, #500f91 0% , #1c8886 100%);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.play-together-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    
+    background: linear-gradient(135deg,  #764ba2  0%,#fcb69f 100%);
+}
+
+.play-together-btn:active {
+    transform: translateY(-1px);
+}
+
+.btn-icon {
+    font-size: 1.5rem;
+}
+
+.btn-text {
+    flex: 1;
+}
+
+.btn-arrow {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.play-together-btn:hover .btn-arrow {
+    transform: translateX(5px);
+}
+
+
+.motivational-text {
+    text-align: center;
+    padding: 0 25px 25px 25px;
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+
+@media (max-width: 768px) {
+    .play-together-card {
+        max-width: 100%;
+    }
+
+    
+    .play-together-card.full-width {
+        grid-column: span 1;
+        min-height: 500px;
+    }
+
+    .play-together-card.full-width .quick-stats,
+    .play-together-card.full-width .rewards-preview {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .card-header {
+        padding: 20px;
+    }
+
+    .header-icon {
+        font-size: 3rem;
+    }
+
+    .header-content h2 {
+        font-size: 1.4rem;
+    }
+
+    .quick-stats {
+        padding: 15px 20px;
+    }
+
+    .progress-section {
+        padding: 15px 20px;
+    }
+
+    .rewards-preview {
+        padding: 0 20px 15px 20px;
+    }
+
+    .play-checklist {
+        padding: 0 20px 15px 20px;
+    }
+
+    .play-together-btn {
+        width: calc(100% - 40px);
+        margin: 0 20px 15px 20px;
+        padding: 16px;
+        font-size: 1.1rem;
+    }
+
+    .motivational-text {
+        padding: 0 20px 20px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .header-icon {
+        font-size: 2.5rem;
+    }
+
+    .header-content h2 {
+        font-size: 1.3rem;
+    }
+
+    .quick-stats {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    .rewards-preview {
+        grid-template-columns: 1fr;
+        padding: 0 15px 15px 15px;
+    }
+
+    .stat-number {
+        font-size: 1.2rem;
+    }
+
+    .reward-value {
+        font-size: 1.1rem;
+    }
+}

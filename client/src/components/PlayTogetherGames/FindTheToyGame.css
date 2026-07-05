@@ -1,0 +1,302 @@
+.find-the-toy-game {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  position: relative;
+}
+
+.game-intro, .game-complete {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.game-intro h1, .game-complete h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.game-rules {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+}
+
+.game-rules h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.role-instructions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.parent-role, .child-role {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.parent-role h4, .child-role h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.parent-role p, .child-role p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.btn-start-game, .btn-close-game {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.btn-start-game:hover, .btn-close-game:hover {
+  transform: translateY(-2px);
+}
+
+.btn-back {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0.5rem;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+}
+
+.game-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.game-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.stat {
+  background: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.parent-view {
+  background: #fff3cd;
+  border: 3px solid #ffc107;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+.secret-info h3 {
+  color: #856404;
+  margin-bottom: 1rem;
+}
+
+.target-toy {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.target-toy p {
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.toy-emoji {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.hint-text {
+  color: #666;
+  font-style: italic;
+  margin: 1rem 0;
+}
+
+.btn-ready {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.child-view {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.instruction {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.instruction h3 {
+  color: #333;
+  margin: 0;
+}
+
+.toys-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.toy-button {
+  background: white;
+  border: 3px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toy-button:hover {
+  transform: scale(1.05);
+  border-color: #667eea;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.toy-button.found {
+  background: #d4edda;
+  border-color: #28a745;
+  animation: pulse 0.5s;
+}
+
+.toy-button.incorrect {
+  background: #f8d7da;
+  border-color: #dc3545;
+  animation: shake 0.5s;
+}
+
+.toy-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.success-message {
+  background: #d4edda;
+  border: 3px solid #28a745;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.success-message h2 {
+  color: #155724;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.incorrect-message {
+  background: #f8d7da;
+  border: 3px solid #dc3545;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-top: 2rem;
+  animation: shake 0.5s;
+}
+
+.incorrect-message h2 {
+  color: #721c24;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.btn-exit {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.btn-exit:hover {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+@media (max-width: 768px) {
+  .toys-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .role-instructions {
+    grid-template-columns: 1fr;
+  }
+}
