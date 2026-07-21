@@ -372,15 +372,17 @@ const CategorizationGame = ({ onComplete, onClose, totalPoints = 30 }) => {
     setRoundComplete(false);
   };
 
-  if (gameComplete) {
-    
-    React.useEffect(() => {
-      const timer = setTimeout(() => {
-        handleCompleteGame();
-      }, 5000);
-      return () => clearTimeout(timer);
-    }, []);
+  // Auto close after 5 seconds if game is completed
+  useEffect(() => {
+    if (!gameComplete) return;
 
+    const timer = setTimeout(() => {
+      handleCompleteGame();
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [gameComplete]);
+
+  if (gameComplete) {
     return (
       <div className="categorization-overlay">
         <div className="categorization-container">
