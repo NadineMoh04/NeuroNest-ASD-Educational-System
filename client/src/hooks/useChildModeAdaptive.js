@@ -165,6 +165,8 @@ export const useChildModeAdaptive = ({
     showFeedback: feedback.show,
     consecutiveCorrect,
     consecutiveIncorrect,
+    setDifficulty,
+    setConsecutiveIncorrect,
     stats: getStats(),
     recordAnswer,
     getAccuracy,

@@ -78,5 +78,14 @@
     justify-content: space-between;
     margin-bottom: 40px;
     font-size: 1.5rem;
-    color: #888;
+    color: #000000;
+}
+
+.number-card.wrong {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: #f8f8f8;
+    box-shadow: none;
+    transform: scale(0.9) !important;
 }

@@ -19,10 +19,12 @@ const ShapeSortingGame = ({ onComplete, onClose, totalPoints = 15 }) => {
     const [feedback, setFeedback] = useState('');
     const [round, setRound] = useState(0);
     const [animateSuccess, setAnimateSuccess] = useState(false);
+    const [wrongAttempts, setWrongAttempts] = useState(0);
 
     const MAX_ROUNDS = 5;
 
     const setupLevel = useCallback(() => {
+        setWrongAttempts(0);
         let availableShapes = [];
         if (level === 1) availableShapes = [SHAPES[0], SHAPES[1]]; 
         else if (level === 2) availableShapes = [SHAPES[0], SHAPES[1], SHAPES[2]]; 
@@ -75,9 +77,21 @@ const ShapeSortingGame = ({ onComplete, onClose, totalPoints = 15 }) => {
                 }
             }, 1500);
         } else {
-            
             setFeedback(t('Try again'));
             setTimeout(() => setFeedback(''), 1500);
+
+            setWrongAttempts(prev => {
+                const newCount = prev + 1;
+                if (newCount >= 3) {
+                    setLevel(1);
+                    setFeedback(t("Let's try an easier shape!"));
+                    setTimeout(() => {
+                        setupLevel();
+                    }, 1000);
+                    return 0;
+                }
+                return newCount;
+            });
         }
     };
 

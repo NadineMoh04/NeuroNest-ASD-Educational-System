@@ -121,7 +121,7 @@
 .game-header h2 {
   margin: 0;
   font-size: 1.8rem;
-  color: #333;
+  color: #000000;
 }
 
 .game-stats {
@@ -134,7 +134,7 @@
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 600;
-  color: #333;
+  color: #000000;
 }
 
 .parent-view {

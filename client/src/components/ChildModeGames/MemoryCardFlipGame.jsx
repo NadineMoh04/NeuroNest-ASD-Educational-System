@@ -79,7 +79,7 @@ const MemoryCardFlipGame = ({ onComplete, onClose, totalPoints = 30 }) => {
 
     const newFlipped = [...flippedIndices, index];
     setFlippedIndices(newFlipped);
-
+ 
     if (newFlipped.length === 2) {
       setMoves(prev => prev + 1);
       setCanFlip(false);

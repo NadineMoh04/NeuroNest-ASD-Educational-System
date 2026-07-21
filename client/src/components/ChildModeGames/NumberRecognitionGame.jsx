@@ -17,16 +17,18 @@ const NumberRecognitionGame = ({ onComplete, onClose, totalPoints = 20 }) => {
         showFeedback,
         stats,
         recordAnswer,
-        getAccuracy
+        getAccuracy,
+        setDifficulty
     } = useChildModeAdaptive({
         initialDifficulty: 'Easy',
-        consecutiveThreshold: 3
+        consecutiveThreshold: 5
     });
 
     const [targetNumber, setTargetNumber] = useState(1);
     const [options, setOptions] = useState([]);
     const [score, setScore] = useState(0);
     const [round, setRound] = useState(0);
+    const [wrongAttempts, setWrongAttempts] = useState(0);
 
     const MAX_ROUNDS = 5;
 
@@ -44,6 +46,7 @@ const NumberRecognitionGame = ({ onComplete, onClose, totalPoints = 20 }) => {
     }, []);
 
     const startRound = useCallback(() => {
+        setWrongAttempts(0);
         let max = 3;
         if (difficulty === 'Medium') max = 5;
         if (difficulty === 'Hard') max = 10;
@@ -63,20 +66,32 @@ const NumberRecognitionGame = ({ onComplete, onClose, totalPoints = 20 }) => {
 
         if (isCorrect) {
             setScore(prev => prev + (totalPoints / MAX_ROUNDS));
+            setTimeout(() => {
+                if (round + 1 >= MAX_ROUNDS) {
+                    onComplete(score + (totalPoints / MAX_ROUNDS), {
+                        achieved: getAccuracy(),
+                        difficulty,
+                        totalAttempts: round + 1
+                    });
+                } else {
+                    setRound(prev => prev + 1);
+                    startRound();
+                }
+            }, 1000);
+        } else {
+            setWrongAttempts(prev => {
+                const newCount = prev + 1;
+                if (newCount >= 3) {
+                    if (difficulty === 'Easy') {
+                        startRound();
+                    } else {
+                        setDifficulty('Easy');
+                    }
+                    return 0;
+                }
+                return newCount;
+            });
         }
-
-        setTimeout(() => {
-            if (round + 1 >= MAX_ROUNDS) {
-                onComplete(score + (isCorrect ? totalPoints / MAX_ROUNDS : 0), {
-                    achieved: getAccuracy(),
-                    difficulty,
-                    totalAttempts: round + 1
-                });
-            } else {
-                setRound(prev => prev + 1);
-                startRound();
-            }
-        }, 1000);
     };
 
     const renderVisuals = (num) => {

@@ -30,24 +30,26 @@ const ColorMatchingGame = ({ onComplete, onClose, totalPoints = 10 }) => {
         showFeedback,
         stats,
         recordAnswer,
-        getAccuracy
+        getAccuracy,
+        setDifficulty
     } = useChildModeAdaptive({
         initialDifficulty: 'Easy',
-        consecutiveThreshold: 3
+        consecutiveThreshold: 5
     });
 
     const [score, setScore] = useState(0);
     const [roundsPlayed, setRoundsPlayed] = useState(0);
 
-    
     const [targetItem, setTargetItem] = useState(null);
     const [options, setOptions] = useState([]);
     const [showCelebration, setShowCelebration] = useState(false);
+    const [wrongAttempts, setWrongAttempts] = useState(0);
 
     const MAX_ROUNDS = 5; 
     const config = DIFFICULTY_CONFIG[difficulty];
 
     const startNewRound = useCallback(() => {
+        setWrongAttempts(0);
         const target = COLORS[Math.floor(Math.random() * COLORS.length)];
         setTargetItem(target);
 
@@ -69,6 +71,8 @@ const ColorMatchingGame = ({ onComplete, onClose, totalPoints = 10 }) => {
     }, [startNewRound]);
 
     const handleOptionClick = (item) => {
+        if (showCelebration) return;
+
         const isCorrect = item.name === targetItem.name;
         recordAnswer(isCorrect, `color_${item.name}`);
 
@@ -92,6 +96,19 @@ const ColorMatchingGame = ({ onComplete, onClose, totalPoints = 10 }) => {
                     startNewRound();
                 }
             }, 1500); 
+        } else {
+            setWrongAttempts(prev => {
+                const newCount = prev + 1;
+                if (newCount >= 3) {
+                    if (difficulty === 'Easy') {
+                        startNewRound();
+                    } else {
+                        setDifficulty('Easy');
+                    }
+                    return 0;
+                }
+                return newCount;
+            });
         }
     };
 

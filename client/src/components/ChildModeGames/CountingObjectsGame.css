@@ -51,7 +51,7 @@
 .game-header {
   text-align: center;
   margin-bottom: 20px;
-  color: white;
+  color: #000000;
 }
 
 .game-header h2 {
@@ -196,6 +196,16 @@
 .count-option:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.count-option.wrong {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+  background: #ffe6e6 !important;
+  border-color: #ffb3b3 !important;
+  box-shadow: none;
+  transform: scale(0.9) !important;
 }
 
 .option-number {

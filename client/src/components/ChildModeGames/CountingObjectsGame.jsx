@@ -51,10 +51,11 @@ const CountingObjectsGame = ({ onComplete, onClose, totalPoints = 30 }) => {
     showFeedback,
     stats,
     recordAnswer,
-    getAccuracy
+    getAccuracy,
+    setDifficulty
   } = useChildModeAdaptive({
     initialDifficulty: 'Easy',
-    consecutiveThreshold: 3
+    consecutiveThreshold: 5
   });
 
   const [objects, setObjects] = useState([]);
@@ -63,6 +64,7 @@ const CountingObjectsGame = ({ onComplete, onClose, totalPoints = 30 }) => {
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
 
   const MAX_ROUNDS = 10;
   const config = DIFFICULTY_CONFIG[difficulty];
@@ -70,6 +72,7 @@ const CountingObjectsGame = ({ onComplete, onClose, totalPoints = 30 }) => {
 
   
   const generateQuestion = useCallback(() => {
+    setWrongAttempts(0);
     
     const count = Math.floor(Math.random() * (config.maxCount - config.minCount + 1)) + config.minCount;
     setCorrectCount(count);
@@ -101,28 +104,41 @@ const CountingObjectsGame = ({ onComplete, onClose, totalPoints = 30 }) => {
   const handleAnswer = (selectedNumber) => {
     if (selectedAnswer !== null) return; 
     
-    setSelectedAnswer(selectedNumber);
     const isCorrect = selectedNumber === correctCount;
     
     
     recordAnswer(isCorrect, 'counting');
 
     if (isCorrect) {
+      setSelectedAnswer(selectedNumber);
       setScore(prev => prev + pointsPerRound);
-    }
 
-    setTimeout(() => {
-      if (round + 1 >= MAX_ROUNDS) {
-        onComplete(score + (isCorrect ? pointsPerRound : 0), {
-          achieved: getAccuracy(),
-          difficulty,
-          totalAttempts: round + 1
-        });
-      } else {
-        setRound(prev => prev + 1);
-        generateQuestion();
-      }
-    }, 2000);
+      setTimeout(() => {
+        if (round + 1 >= MAX_ROUNDS) {
+          onComplete(score + pointsPerRound, {
+            achieved: getAccuracy(),
+            difficulty,
+            totalAttempts: round + 1
+          });
+        } else {
+          setRound(prev => prev + 1);
+          generateQuestion();
+        }
+      }, 2000);
+    } else {
+      setWrongAttempts(prev => {
+        const newCount = prev + 1;
+        if (newCount >= 3) {
+          if (difficulty === 'Easy') {
+            generateQuestion();
+          } else {
+            setDifficulty('Easy');
+          }
+          return 0;
+        }
+        return newCount;
+      });
+    }
   };
 
   const getItemSize = () => {

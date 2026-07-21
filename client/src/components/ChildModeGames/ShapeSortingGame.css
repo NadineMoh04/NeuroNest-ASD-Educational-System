@@ -51,7 +51,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 1.5rem;
-    color: #666;
+    color: #000000;
     margin-bottom: 20px;
 }
 
@@ -180,4 +180,12 @@
     opacity: 0;
     transform: scale(0.5);
     transition: all 0.5s;
+}
+
+.bin-drop-zone.wrong {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: not-allowed;
+    border-color: #ffb3b3;
+    background-color: #ffe6e6;
 }

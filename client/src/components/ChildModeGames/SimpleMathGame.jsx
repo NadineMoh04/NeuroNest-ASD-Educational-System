@@ -105,13 +105,23 @@ const SimpleMathGame = ({ onComplete, onClose, totalPoints = 20 }) => {
             setIsWrong(true);
             setFeedback('Try Again 🧐');
             setPointsForRound(prev => Math.max(0, prev - 1)); 
-            setRoundAttempts(prev => prev + 1);
             setStats(prev => ({ ...prev, incorrect: prev.incorrect + 1 }));
 
-            setTimeout(() => {
-                setIsWrong(false);
-                setFeedback('');
-            }, 1000);
+            const nextWrong = roundAttempts + 1;
+            setRoundAttempts(nextWrong);
+
+            if (nextWrong >= 3) {
+                setLevel(1);
+                setFeedback(t["Let's try an easier problem!"] || "Let's try an easier problem!");
+                setTimeout(() => {
+                    startNewRound();
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    setIsWrong(false);
+                    setFeedback('');
+                }, 1000);
+            }
         }
     };
 
